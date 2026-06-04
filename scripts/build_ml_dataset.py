@@ -110,7 +110,7 @@ def build_dataset():
     first_write = not OUTPUT_FILE.exists()
 
     for i, (code, island_meta) in enumerate(islands_map.items()):
-        if i < 4868:
+        if i < 10998:
             continue
         # if i > 1403:
         #     break
