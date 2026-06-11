@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 import joblib
+import shap
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
@@ -31,6 +32,21 @@ TARGET_COLUMN = "target"
 df = pd.read_csv(DATASET_PATH)
 
 print(f"Loaded {len(df)} rows")
+
+# ============================
+# GLOBAL STATISTICS (IMPORTANT)
+# ============================
+
+target_col = "target"
+
+global_stats = {
+    "mean": float(df[target_col].mean()),
+    "median": float(df[target_col].median()),
+    "p25": float(df[target_col].quantile(0.25)),
+    "p75": float(df[target_col].quantile(0.75)),
+    "p90": float(df[target_col].quantile(0.90)),
+    "p95": float(df[target_col].quantile(0.95)),
+}
 
 
 # ============================================
@@ -118,6 +134,7 @@ model.fit(
     y_train
 )
 
+explainer = shap.TreeExplainer(model)
 
 # ============================================
 # EVALUATION
@@ -155,7 +172,9 @@ for i in range(min(10, len(preds))):
 joblib.dump(
     {
         "model": model,
-        "features": feature_cols
+        "features": feature_cols,
+        "explainer": explainer,
+        "global_stats": global_stats
     },
     MODEL_OUTPUT
 )
